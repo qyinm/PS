@@ -1,0 +1,3 @@
+/Users/ordo/Desktop/cs/boj/C++/2448/cmake-build-debug/CMakeFiles/2448.dir
+/Users/ordo/Desktop/cs/boj/C++/2448/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/ordo/Desktop/cs/boj/C++/2448/cmake-build-debug/CMakeFiles/rebuild_cache.dir
