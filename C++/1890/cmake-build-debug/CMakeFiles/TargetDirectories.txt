@@ -1,3 +1,0 @@
-/Users/ordo/Desktop/cs/boj/C++/1890/cmake-build-debug/CMakeFiles/1890.dir
-/Users/ordo/Desktop/cs/boj/C++/1890/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/ordo/Desktop/cs/boj/C++/1890/cmake-build-debug/CMakeFiles/rebuild_cache.dir
