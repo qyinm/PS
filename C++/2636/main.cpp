@@ -9,7 +9,6 @@ struct Dir {
     int y;
 };
 
-
 int cheese[101][101];
 int width, height;
 bool visited[101][101];
@@ -27,7 +26,8 @@ int bfs() {
             int nx = x + dx[i];
             int ny = y + dy[i];
 
-            if (nx < 1 || nx > width || ny < 1 || ny > height) continue;
+            if (nx < 1 || nx > width || ny < 1 || ny > height)
+                continue;
             if (cheese[ny][nx] == 0 && visited[ny][nx] == 0) {
                 q.push({nx, ny});
                 visited[ny][nx] = true;
@@ -73,7 +73,6 @@ int main() {
         ans_cnt = new_cnt;
         init();
     }
-
 
     cout << t << endl << ans_cnt;
     return 0;
