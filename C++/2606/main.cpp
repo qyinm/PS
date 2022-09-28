@@ -1,45 +1,43 @@
-#include <iostream>
-#include <queue>
-#include <vector>
+#include<iostream>
+#include<queue>
 
 using namespace std;
 
-int virus = 0;
-int tree[200][200];
-int visited[200];
+bool graph[101][101];   // 그래프끼리의 연결
+bool bfs_visited[101];  // 해당 노드의 감염여부
+int nodes, edges;
+int virus_count;        // 바이러스 개수
 queue<int> q;
-int vertex_num;
 
 void bfs() {
-    if (q.size() == 0) return;
-    int start = q.front();
-    q.pop();
-    for (int i = 1; i <= vertex_num; i++) {
-        if (tree[start][i] == 1 && !visited[i]) {
-            q.push(i);
-            virus++;
-            visited[i] = 1;
+    while(!q.empty()) {
+        int cur_node = q.front();
+        q.pop();
+
+        for (int node = 1; node <= nodes; node++) {
+            if (bfs_visited[node] || !graph[cur_node][node]) {  // 해당 노드가 이미 감염되었거나, 현재노드와 연결되어 있지 않았다면 continue
+                continue;
+            }
+            q.push(node);
+            bfs_visited[node] = true;
+            virus_count++;
         }
     }
-    bfs();
 }
 
-int main() {
-    int edges_num;
+int main(void) {
+    cin >> nodes >> edges;
 
-    cin >> vertex_num;
-    cin >> edges_num;
-
-
-    for (int i = 0; i < edges_num; i++) {
-        int a, b;
-        cin >> a >> b;
-        tree[a][b] = 1;
-        tree[b][a] = 1;
+    for (int edge = 0; edge < edges; edge++) {
+        int node_1, node_2;
+        cin >> node_1 >> node_2;
+        graph[node_1][node_2] = true;
+        graph[node_2][node_1] = true;
     }
     q.push(1);
-    visited[1] = 1;
+    bfs_visited[1] = true;
+
     bfs();
-    cout << virus;
-    return 0;
+
+    cout << virus_count << endl;
 }
