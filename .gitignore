@@ -1,4 +1,8 @@
-.idea/
-cmake-build-debug/
-CMakeLists.txt 
+cmake-build-debug
+CMakeLists.txt
+main
+.idea
+.vscode
 .DS_Store
+.git
+.gitignore
