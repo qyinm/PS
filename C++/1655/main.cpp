@@ -4,6 +4,8 @@
 using namespace std;
 
 int main() {
+    ios_base::sync_with_stdio(false);
+	cin.tie(NULL), cout.tie(NULL);
     int n;
     cin >> n;
 
@@ -13,37 +15,32 @@ int main() {
     // 중앙값에서 큰 수들    
     priority_queue<int, std::vector<int>, std::greater<int>> minQ;
 
-    for (int i = 0; i < n; i++) {
-        int temp;
+    int temp;
+    cin >> temp;
+    maxQ.push(temp);
+    cout << maxQ.top() << "\n";
+    for (int i = 1; i < n; i++) {
         cin >> temp;
-        
-        if (i == 0) {
-            maxQ.push(temp);
-            cout << maxQ.top() << "\n";
-            continue;
-        }
-        int tempq;
+
         if (i % 2 == 1) {
             if (maxQ.top() > temp) {
-                tempq = maxQ.top();
+                minQ.push(maxQ.top());
                 maxQ.pop();
                 maxQ.push(temp);
-                minQ.push(tempq);
             } else {
                 minQ.push(temp);
             }
         } else {
             if (minQ.top() < temp) {
-                tempq = minQ.top();
+                maxQ.push(minQ.top());
                 minQ.pop();
                 minQ.push(temp);
-                maxQ.push(tempq);
             } else {
                 maxQ.push(temp);
             }
         }
 
-        cout << minQ.top() << "\n";
-
+        cout << maxQ.top() << "\n";
     }
+
 }
