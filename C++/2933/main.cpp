@@ -1,17 +1,28 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <queue>
+#include <set>
+#include <vector>
 
 using namespace std;
 
 int r, c, n, sw = 1;
-vector<vector<char>> grid;
+char grid[100][100];
 vector<int> sticks;
 
 vector<int> dx = {-1, 0, 1, 0};
 vector<int> dy = {0, 1, 0, -1};
 
+void printGrid() {
+    for (int i = r - 1; i >= 0; i--) {
+        for (int j = 0; j < c; j++) {
+            cout << grid[i][j];
+        }
+        cout << endl;
+    }
+}
 
-pair<int, int> shootMineral(const int &height) {
-    if (sw == 1) {
+pair<int, int> shootMineral(const int &height, int &nn) {
+    if (nn % 2 == 0) {
         for (int i = 0; i < c; i++) {
             if (grid[height][i] == 'x') {
                 grid[height][i] = '.';
@@ -29,16 +40,16 @@ pair<int, int> shootMineral(const int &height) {
     return {-1, -1};
 }
 
-int bfs(int sx, int sy, vector<vector<int>> &visited, priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>> &clust) {
+int bfs(int sx, int sy, vector<vector<int>> &visited,
+        multiset<pair<int, int>> &clust) {
     queue<pair<int, int>> q;
     int chk = 0;
     q.push({sx, sy});
     visited[sy][sx] = 1;
-    clust.push({sy, sx});
+    clust.insert({sy, sx});
     int curx, cury;
-    
 
-    while(!q.empty()) {
+    while (!q.empty()) {
         curx = q.front().first;
         cury = q.front().second;
         q.pop();
@@ -47,97 +58,82 @@ int bfs(int sx, int sy, vector<vector<int>> &visited, priority_queue<pair<int,in
         for (int i = 0; i < 4; i++) {
             nx = curx + dx[i];
             ny = cury + dy[i];
-            
-            if (nx < 0 || nx >= c || ny < 0 || ny >= r) continue;
-            if (visited[ny][nx] == 1 || grid[ny][nx] == '.')    continue;
+
+            if (nx < 0 || nx >= c || ny < 0 || ny >= r)
+                continue;
+            if (visited[ny][nx] == 1 || grid[ny][nx] == '.')
+                continue;
 
             if (ny == 0) {
                 chk = 1;
             }
             q.push({nx, ny});
             visited[ny][nx] = 1;
-            clust.push({ny, nx});
+            clust.insert({ny, nx});
         }
     }
     return chk;
-
 }
-
 
 int main() {
     cin >> r >> c;
 
-    grid.assign(r, vector<char>(c, 0));
-
     for (int i = r - 1; i >= 0; i--) {
-        for (int j = c - 1; j >= 0; j--) {
+        for (int j = 0; j < c; j++) {
             cin >> grid[i][j];
         }
     }
     cin >> n;
-    sticks.assign(n, 0);
-    for(auto &stick : sticks) {
+
+    int posx, posy, nx, ny, stick;
+    for (int nn = 0; nn < n; nn++) {
         cin >> stick;
-    }
-
-    int posx, posy, nx, ny;
-    for (auto const &stick: sticks) {
-        auto shootMineralRet = shootMineral(stick - 1);
-        sw *= -1;
-
+        // printGrid();
+        auto shootMineralRet = shootMineral(stick - 1, nn);
+        // printGrid();
         posx = shootMineralRet.first;
         posy = shootMineralRet.second;
 
-        if (posx == -1 && posy == -1)   continue;
-        
+        if (posx == -1 || posy == -1)
+            continue;
+
         for (int i = 0; i < 4; i++) {
-            vector<vector<int>> visited(100, vector<int>(100, 0));
+            vector<vector<int>> visited(100, vector<int>(100));
             nx = posx + dx[i];
             ny = posy + dy[i];
-            if (ny < 0 || ny >= c || nx < 0 || nx >= r) continue;
-            if (grid[ny][nx] == '.')    continue;
+            if (ny < 0 || ny >= r || nx < 0 || nx >= c)
+                continue;
+            if (grid[ny][nx] == '.')
+                continue;
 
-            priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>> mineral_clust;
+            multiset<pair<int, int>> mineral_clust;
             int checkLevitation = bfs(nx, ny, visited, mineral_clust);
-            if (checkLevitation)    continue;
-            
-            vector<pair<int, int>> mineral_down;
+            if (checkLevitation)
+                continue;
 
-
-            for (int h = 0; h <= ny; h++) {
-                for (int w = 0; w < c; w++) {
-                    if (!visited[h][w])  continue;
-                    mineral_down.push_back({h, w});
+            int minHeight = 987654321;
+            for (auto &mineral : mineral_clust) {
+                int cnt = 0;
+                for (int height = mineral.first - 1; height >= 0; height--) {
+                    if (grid[height][mineral.second] == '.')
+                        cnt++;
+                    if (grid[height][mineral.second] == 'x' &&
+                        visited[height][mineral.second] == 0) {
+                        break;
+                    }
                 }
-                if (mineral_down.size() != 0)   break;
+                minHeight = min(minHeight, cnt);
             }
 
-            int minHeight = 2e9;
-            for (const auto &mineral : mineral_down) {
-                int height = mineral.first - 1;
-                int curx = mineral.second;
-                for (; grid[height][curx] != 'x'; height--);
-                int curDistance = mineral.first - height - 1;
-                minHeight = min(minHeight, curDistance);
-            }
-            
-            while(!mineral_clust.empty()) {
-                auto mineral = mineral_clust.top();
+            for (auto &mineral : mineral_clust) {
                 int y = mineral.first;
                 int x = mineral.second;
-                mineral_clust.pop();
 
                 grid[y][x] = '.';
-                grid[y-minHeight][x] = 'x';
+                grid[y - minHeight][x] = 'x';
             }
-            break;
         }
     }
 
-    for (int i = r - 1; i >= 0; i--) {
-        for (int j = c - 1; j >= 0; j--) {
-            cout << grid[i][j];
-        }
-        cout << endl;
-    }
+    printGrid();
 }
