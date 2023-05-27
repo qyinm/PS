@@ -6,3 +6,4 @@ main
 .DS_Store
 .git
 .gitignore
+.class
