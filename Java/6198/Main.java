@@ -13,19 +13,19 @@ public class Main {
         }
         
         
-        Stack<Pair> st = new Stack<>();
+        ArrayDeque<Pair> st = new ArrayDeque<>();
         long[] ans = new long[n];
         for (int i = n - 1; i >= 0; i--) {
             while(!st.isEmpty()) {
-                if (height[i] > st.peek().height) {
-                    ans[i] += ans[st.peek().idx] + 1;
-                    st.pop();
+                if (height[i] > st.peekLast().height) {
+                    ans[i] += ans[st.peekLast().idx] + 1;
+                    st.pollLast();
                 } else {
                     break;
                 }
             }
 
-            st.add(new Pair(i, height[i]));
+            st.addLast(new Pair(i, height[i]));
         }
 
         long ansSum = 0;
