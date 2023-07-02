@@ -4,7 +4,7 @@ import java.util.stream.LongStream;
 import java.io.*;
 
 class Main {
-    static long[] dp;
+    static HashMap<Long, Long> map = new HashMap<>();
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
@@ -14,17 +14,14 @@ class Main {
         int p = Integer.parseInt(st.nextToken());
         int q = Integer.parseInt(st.nextToken());
 
-        dp = new long[500001];
-        dp[0] = 1;
-        IntStream.rangeClosed(1, 500000).
-                    forEach(k -> dp[k] = dp[k/q] + dp[k/p]);
+        
         System.out.println(solve(n, p, q));
     }
 
     public static long solve(long n, int p, int q) {
-        if (n > 500000) {
-            return solve(n/p, p, q) + solve(n/q, p, q);
-        }
-        return dp[(int)n];
+        if (n == 0) return 1;
+        if (map.containsKey(n)) return map.get(n);
+        map.put(n, solve(n/q, p, q) + solve(n/p, p, q));
+        return map.get(n);
     }
 }
