@@ -19,9 +19,7 @@ public class Main {
 
         int[] check = new int[variation + 1];
         
-        int distinct = 0;
         int maxCnt = 0;
-        int flag = 1;
         int l = 0;
         int r = 0;
         int cnt = 0;
