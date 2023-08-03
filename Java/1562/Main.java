@@ -7,33 +7,32 @@ class Main {
     int n;
     int[][][] cache;
 
+    public int dp(int idx, int num, int bit) {
+
+        if (cache[bit][idx][num] != 0) {
+            return cache[bit][idx][num];
+        }
+        if (idx == n)   return bit == (1 << 10) - 1 ? 1 : 0;
+        int res = 0;
+        if (num + 1 < 10)
+            res += dp(idx + 1, num + 1, bit | 1 << (num + 1));
+        if (num - 1 >= 0)
+            res += dp(idx + 1, num - 1, bit | 1 << (num -1));
+        return cache[bit][idx][num] = res % 1000000000;
+    }
+
     public void solve() throws Exception{
         n = Integer.parseInt(br.readLine());
-        int mod = 1000000000;
-        cache = new int[101][10][1 << 10];
-        int ans = 0;
-        for (int idx = 1; idx < 10; idx++) {
-            cache[1][idx][1 << idx] = 1;
-        }
+
+        cache = new int[1 << 11][101][10];
         
-        for (int i = 2; i <= n; ++i) {
-            for (int j = 0; j <= 9; ++j) {
-                for (int k = 0; k <= (1 << 10) - 1; ++k) {
-                    if (j == 0)
-                        cache[i][0][k | (1 << 0)] = (cache[i][0][k | (1 << 0)] + cache[i - 1][1][k]) % mod;
-                    else if (j == 9)
-                        cache[i][9][k | (1 << 9)] = (cache[i][9][k | (1 << 9)] + cache[i - 1][8][k]) % mod;
-                    else {
-                        cache[i][j][k | (1 << j)] = (cache[i][j][k | (1 << j)] + cache[i - 1][j - 1][k]) % mod;
-                        cache[i][j][k | (1 << j)] = (cache[i][j][k | (1 << j)] + cache[i - 1][j + 1][k]) % mod;
-                    }
-                }
-            }
+        long sum= 0;
+        for (int i = 1; i < 10; i++) {
+            sum += dp(1, i, 1 << i);
+            sum %= 1000000000;
         }
 
-        for (int j = 0; j <= 9; ++j)
-            ans = (ans + cache[n][j][(1<<10) - 1]) % mod;
-        System.out.println(ans);
+        System.out.println(sum);
     }
 
     public static void main(String[] args) throws Exception {
