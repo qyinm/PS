@@ -1,7 +1,9 @@
-n = int(input())
+import sys
+
+n = int(sys.stdin.readline())
 st = []
 for _ in range(n):
-    q = list(map(int, input().split()))
+    q = list(map(int, sys.stdin.readline().rstrip().split()))
     if q[0] == 1:
         st.append(q[1])
     elif q[0] == 2:
