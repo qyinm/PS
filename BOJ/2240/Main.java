@@ -4,10 +4,8 @@ class Main {
     
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     StringTokenizer st;
-    Integer initValue = 0;
     int[] jadu;
     int[][][] cache;
-    int maxIdx;
     int t, w;
     public void solve() throws Exception {
         st = new StringTokenizer(br.readLine());
