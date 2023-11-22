@@ -1,4 +1,6 @@
 from enum import Enum
+from sys import stdin
+input = lambda : stdin.readline().strip()
 
 class Command(Enum):
     NUM = "NUM"
