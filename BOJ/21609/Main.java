@@ -6,13 +6,10 @@ public class Main
     int[][] matrix;
     int[] dr = {-1, 0, 1, 0};
     int[] dc = {0, 1, 0, -1};
-    PriorityQueue<Point> pq = new PriorityQueue<>();
+    Deque<Point> pq = new LinkedList<>();
+    int rainbow = 0;
     static int n, m;
     boolean[][] visited;
-    
-    public void deepCopy() {
-        
-    }
     
     public void levitation() {
         for (int row = n-2; row >= 0; row--) {
@@ -48,20 +45,20 @@ public class Main
     public void bfs(int r, int c) {
         int block = matrix[r][c];
         visited[r][c] = true;
-        PriorityQueue<Point> tempq = new PriorityQueue<>();
+        Deque<Point> tempq = new LinkedList<>();
         
         Deque<Point> queue = new LinkedList<>();
         queue.add(Point.create(r, c));
         tempq.add(Point.create(r, c));
         boolean[][] zeroVis = new boolean[n][n];
-        
+        int tempRainbow = 0;
         while (!queue.isEmpty()) {
             Point curPoint = queue.poll();
             for (int i = 0; i < 4; i++) {
                 int nr = curPoint.row + dr[i];
                 int nc = curPoint.col + dc[i];
                 
-                if (!Point.valid(nr, nc)) {
+                if (!Point.valid(nr, nc) || matrix[nr][nc] < 0) {
                     continue;
                 }
                 
@@ -69,6 +66,7 @@ public class Main
                     tempq.add(Point.create(nr, nc));
                     queue.add(Point.create(nr, nc));
                     if (matrix[nr][nc] == 0) {
+                        tempRainbow += 1;
                         zeroVis[nr][nc] = true;
                     } else {
                         visited[nr][nc] = true;
@@ -80,13 +78,35 @@ public class Main
             return;
         }
         
-        if (tempq.size() > pq.size() || (tempq.size() == pq.size() && tempq.peek().compareTo(pq.peek()) > 0)) {
+        if (tempq.size() > pq.size()) {
+            rainbow = tempRainbow;
             pq = tempq;
+            return;
         }
-        return;
+        
+        if (tempq.size() < pq.size()) {
+            return;
+        }
+        
+        if (tempRainbow < rainbow) {
+            return;
+        }
+        if (tempRainbow > rainbow) {
+            rainbow = tempRainbow;
+            pq = tempq;
+            return;
+        }
+        
+        if (tempq.peekFirst().compareTo(pq.peekFirst()) > 0) {
+            rainbow = tempRainbow;
+            pq = tempq;
+            return;
+        }
+        
     }
     
     public void blank() {
+        rainbow = 0;
         while (!pq.isEmpty()) {
             Point p = pq.poll();
             matrix[p.row][p.col] = -2;
@@ -129,24 +149,36 @@ public class Main
 		            bfs(r, c);
 		        }
 		    }
-		    if (pq.size() == 0) {
+		    if (pq.isEmpty()) {
 		        break;
 		    }
 		    ans += (pq.size() * pq.size());
 		    blank();
-		    show();
+		    //show();
 		    levitation();
-		    show();
+		    //show();
 		    lotation();
-		    show();
+		    //show();
 		    levitation();
-		    show();
+		    //show();
 		}
 		System.out.println(ans);
     }
     
 	public static void main(String[] args) throws Exception {
 	    new Main().solve();
+	    /*
+	    PriorityQueue<Point> pq = new PriorityQueue<>();
+	    pq.add(Point.create(4, 1));
+	    pq.add(Point.create(3, 4));
+	    Point p = pq.poll();
+	    Point p2 = pq.poll();
+	    if (p.compareTo(p2) > 0) {
+	        System.out.println(p.row + " " + p.col);
+	    } else {
+	        System.out.println(p2.row + " " + p2.col);
+	    }
+	    */
 	}
 	
 	public static class Point implements Comparable<Point> {
@@ -168,18 +200,10 @@ public class Main
 	    
 	    @Override
     	public int compareTo(Point o) {
-    		if (row < o.row) {
-    		    return 1;
-    		} else if (row > o.row) {
-    		    return -1;
+    		if (row == o.row) {
+    		    return col - o.col;
     		}
-    		
-    		if (col < o.col) {
-    		    return 1;
-    		}
-    		return -1;
-    	};
-	}
-	
-	
+    		return row - o.row;
+    	}
+	}	
 }
