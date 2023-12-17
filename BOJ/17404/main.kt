@@ -1,6 +1,10 @@
 import kotlin.math.*
 
-fun dp(graph: Array<IntArray>, cache: Array<IntArray>, n: Int, row: Int, col: Int, start: Int): Int {
+lateinit var graph: Array<IntArray>
+lateinit var cache: Array<IntArray>
+var n = 0
+
+fun dp(row: Int, col: Int, start: Int): Int {
     if (row == n - 1) {
         if (col == start) {
             return 987654321
@@ -18,24 +22,24 @@ fun dp(graph: Array<IntArray>, cache: Array<IntArray>, n: Int, row: Int, col: In
         if (i == col) {
             continue
         }
-        cache[row][col] = min(dp(graph, cache, n, row + 1, i, start) + graph[row][col], cache[row][col])
+        cache[row][col] = min(dp(row + 1, i, start) + graph[row][col], cache[row][col])
     }
     
     return cache[row][col]
 }
 
 fun main() = with(System.`in`.bufferedReader()) {
-    val n = readLine().toInt()
-    val graph = Array(n) {
+    n = readLine().toInt()
+    graph = Array(n) {
         readLine().split(" ").map { it.toInt() }.toIntArray()
     }
     
     var ans = 987654321
     for (i in 0..2) {
-        var cache = Array(n) {
+        cache = Array(n) {
             IntArray(n) {-1}
         }
-        ans = min(ans, dp(graph, cache, n, 0, i, i))
+        ans = min(ans, dp(0, i, i))
     }
     println(ans)
     
