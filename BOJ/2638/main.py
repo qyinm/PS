@@ -22,25 +22,21 @@ def valid_cheese(row, col, graph, n, m, visited):
             wall += 1
     return wall >= 2
 
-def bfs(row, col, graph, visited, n, m, delq):
+def bfs(row, col, graph, visited, n, m, chzq):
     q = deque([(row, col)])
     visited[row][col] = True
-    cheese_cnt = 0
 
     while q:
         cr, cc = q.popleft()
-        
         for i in range(4):
             nr, nc = cr + dr[i], cc + dc[i]
             if not valid_point(nr, nc, n, m) or visited[nr][nc]:
                 continue
             visited[nr][nc] = True
             if graph[nr][nc] == 1:
-                cheese_cnt += 1
-                delq.append((nr, nc))
+                chzq.append((nr, nc))
             else:
                 q.append((nr, nc))
-    return cheese_cnt
 
     
 def main():
@@ -50,16 +46,14 @@ def main():
     ans = 0
     while True:
         visited = [[False] * m for _ in range(n)]
-        delq = deque([])
-        cnt = 0
-        for i in range(n):
-            for j in range(m):
-                if (i == 0 or i == n-1) or (j == 0 or j == m-1) and not visited[i][j]:
-                    cnt += bfs(i, j, graph, visited, n, m, delq)
+        chzq = deque([])
+        cnt = bfs(0, 0, graph, visited, n, m, chzq)
         
         zeroq = deque([])
-        while delq:
-            delr, delc = delq.popleft()
+        if not chzq:
+            break
+        while chzq:
+            delr, delc = chzq.popleft()
             if valid_cheese(delr, delc, graph, n, m, visited):
                 zeroq.append((delr, delc))
         while zeroq:
@@ -70,8 +64,6 @@ def main():
         show(graph)
         print("--------------------------------")
         '''
-        if cnt == 0:
-            break
         ans += 1
     print(ans)
 
