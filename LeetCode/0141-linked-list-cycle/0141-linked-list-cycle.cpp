@@ -12,10 +12,10 @@ using namespace std;
 class Solution {
 public:
     bool hasCycle(ListNode *head) {
-        map<int, int> cache;
+        map<ListNode*, int> cache;
         for (; head != NULL; head = head->next) {
-            cache[head->val] += 1;
-            if (cache[head->val] == 10001) {
+            cache[head] += 1;
+            if (cache[head] == 2) {
                 return true;
             }
         }
