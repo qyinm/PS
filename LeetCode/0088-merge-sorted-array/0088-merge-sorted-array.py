@@ -8,10 +8,7 @@ class Solution:
         for i in range(m, n+m):
             nums1[i] = nums2[i-m]
 
-        for i in range(n+m):
-            for j in range(i+1, n+m):
-                if nums1[i] > nums1[j]:
-                    nums1[i], nums1[j] = nums1[j], nums1[i]
+        nums1.sort()
         
 
     
