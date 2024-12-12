@@ -4,10 +4,13 @@
 
 using namespace std;
 
-void top_sort(int current_course, const vector<vector<int>>& graph, vector<int>& semester) {
+void top_sort(int current_course, const vector<vector<int>>& graph, stack<int>& st, vector<bool>& visited) {
+    visited[current_course] = true;
     for (const auto& next_course : graph[current_course]) {
-        semester[next_course] = max(semester[next_course], semester[current_course] + 1);
+        if (visited[next_course])   continue;
+        top_sort(next_course, graph, st, visited);
     }
+    st.push(current_course);
 }
 
 int main() {
@@ -17,7 +20,8 @@ int main() {
     int n, e;
     cin >> n >> e;
 
-    vector<int> semester(n + 1, 1);
+    stack<int> st;
+    vector<bool> visited(n + 1);
     vector<vector<int>> graph(n + 1);
     for (int i = 0; i < e; i++) {
         int precourse, course;
@@ -26,10 +30,21 @@ int main() {
     }
 
     for (int i = 1; i < n + 1; i++) {
-        top_sort(i, graph, semester);
+        if (visited[i]) continue;
+        top_sort(i, graph, st, visited);
     }
 
-    for (int i = 1; i < n + 1; i++) {
-        cout << semester[i] << " ";
+    vector<int> semesters(n + 1, 1);
+    while (!st.empty()) {
+        int current_course = st.top();
+        st.pop();
+        
+        for (const auto& next_course : graph[current_course]) {
+            semesters[next_course] = max(semesters[next_course], semesters[current_course] + 1);
+        }
+    }
+
+    for (int course = 1; course < n + 1; course++) {
+        cout << semesters[course] << " ";
     }
 }
