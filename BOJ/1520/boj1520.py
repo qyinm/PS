@@ -1,3 +1,7 @@
+import sys
+sys.setrecursionlimit(10000) 
+
+
 m, n = 0, 0
 matrix = []
 cache = []
