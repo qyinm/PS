@@ -15,7 +15,7 @@ def calculate(n, m):
 def main():
     A, B = map(int, input().split())
     if A == 1:
-        print(1)
+        print(B % MOD)
         return
     upside = (calculate(A, B) - 1) % MOD
     mod_inverse = calculate(A - 1, MOD - 2) % MOD
