@@ -1,63 +1,49 @@
 #include <bits/stdc++.h>
-#define FastIO cin.tie(nullptr)->ios_base::sync_with_stdio(false);
-
+#define FastIO cin.tie(nullptr)->ios_base::sync_with_stdio(false)
 using namespace std;
-using ti = tuple<int, int, int>;
 
+int n;
 vector<vector<int>> board;
-vector<vector<vector<int>>> memo;
-vector<vector<ti>> weights = {
-    {{1, 1, 1}, {0, 0, 1}}, 
-    {{1, 1, 1}, {0, 0, 1}, {2, 1, 0}}, 
-    {{1, 1, 1}, {2, 1, 0}}
+vector<vector<vector<int>>> dp;
+
+// 각 방향에서 가능한 다음 상태들 (다음방향, dy, dx)
+const vector<vector<tuple<int,int,int>>> next_state = {
+    {{0,0,1}, {1,1,1}},           // 가로
+    {{0,0,1}, {1,1,1}, {2,1,0}},  // 대각
+    {{1,1,1}, {2,1,0}}            // 세로
 };
-int N;
 
-int dp(int i, int j, int direction) {
+int solve(int y, int x, int dir) {
+    if (y == n-1 && x == n-1) return 1;
     
-    if (memo[direction][i][j] != -1) {
-        return memo[direction][i][j];
-    }
-    if (i == (N-1) && j == (N-1)) {
-        return 1;
-    }
+    int& ret = dp[dir][y][x];
+    if (ret != -1) return ret;
     
-    memo[direction][i][j] = 0;
-    int temp = 0;
-    for (const auto& [nd, wy, wx] : weights[direction]) {
-        int ny = i + wy;
-        int nx = j + wx;
-
-        if (nx < 0 || nx >= N || ny < 0 || ny >= N) continue;
-        if (board[ny][nx] != 0) continue;
-        if (nd == 1 && (board[ny][j] != 0 || board[i][nx] != 0))  continue;
-        temp += dp(ny, nx, nd);
-        // cout << "i: " << i << " j: " << j << " memo: " << memo[i][j] << " " << ny << " " << nx << endl;
+    ret = 0;
+    for (auto [ndir, dy, dx] : next_state[dir]) {
+        int ny = y + dy;
+        int nx = x + dx;
+        
+        if (ny >= n || nx >= n || board[ny][nx]) continue;
+        if (ndir == 1 && (board[ny][x] || board[y][nx])) continue;
+        
+        ret += solve(ny, nx, ndir);
     }
-    memo[direction][i][j] = temp;
-    return memo[direction][i][j];
+    return ret;
 }
 
 int main() {
     FastIO;
-    cin >> N;
-    memo.resize(N);
-    for (auto& m : memo) {
-        m.resize(N);
-        for (auto& mm : m) {
-            mm.resize(N, -1);
-        }
-    }
-    board.resize(N);
-    for (auto& b : board) {
-        b.resize(N);
-    }
-
-    for (auto& row : board) {
-        for (auto& el : row) {
-            cin >> el;
-        }
-    }
-
-    cout << dp(0, 1, 0) << endl;
+    
+    cin >> n;
+    board.resize(n, vector<int>(n));
+    dp.resize(3, vector<vector<int>>(n, vector<int>(n, -1)));
+    
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            cin >> board[i][j];
+            
+    cout << solve(0, 1, 0) << '\n';
+    
+    return 0;
 }
