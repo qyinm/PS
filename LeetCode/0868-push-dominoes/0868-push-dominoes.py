@@ -4,14 +4,15 @@ class Solution:
     def pushDominoes(self, dominoes: str) -> str:
         n = len(dominoes)
         domino_value = [0] * n
+        digit2str = {0: '.', 1: 'R', -1: 'L'}
+        str2digit = {'.': 0, 'R': 1, 'L': -1}
         q = deque([])
+
         for i, domino in enumerate(dominoes):
             if domino == '.':
                 continue
-            if domino == 'R':
-                domino_value[i] = 1
-            elif domino == 'L':
-                domino_value[i] = -1
+
+            domino_value[i] = str2digit[domino]
             q.append((i, domino_value[i]))
         
         while q:
@@ -34,15 +35,6 @@ class Solution:
                 curr, val = temp_q.popleft()
                 if domino_value[curr] != 0:
                     q.append((curr, val))
-        ans = []
-        for val in domino_value:
-            v = None
-            if val == 0:
-                v = '.'
-            elif val == 1:
-                v = 'R'
-            else:
-                v = 'L'
-            ans.append(v)
-        return ''.join(ans)
+
+        return ''.join(digit2str[val] for val in domino_value)
               
