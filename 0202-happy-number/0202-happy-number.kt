@@ -2,7 +2,7 @@ class Solution {
     fun isHappy(n: Int): Boolean {
         val seen = hashSetOf<Int>()
         var current = n
-        while (current > 9 && current !in seen) {
+        while (current != 1 && current !in seen) {
             seen.add(current)
             current = getNextNumber(current)
         }
