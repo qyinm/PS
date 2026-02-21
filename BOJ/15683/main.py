@@ -2,77 +2,51 @@ import sys
 
 input = sys.stdin.readline
 
-# (up, down, left, right)
-DIR = {
-    1: [(0, 0, 0, 1), (0, 0, -1, 0), (0, 1, 0, 0), (-1, 0, 0, 0)],
-    2: [(0, 0, -1, 1), (-1, 1, 0, 0)],
-    3: [(-1, 0, 0, 1), (0, 1, 0, 1), (0, 1, -1, 0), (-1, 0, -1, 0)],
-    4: [(-1, 0, -1, 1), (-1, 1, 0, 1), (0, 1, -1, 1), (-1, 1, -1, 0)],
-    5: [(-1, 1, -1, 1)]
+UP, DOWN, LEFT, RIGHT = (-1, 0), (1, 0), (0, -1), (0, 1)
+
+CCTV_DIRS = {
+    1: [[RIGHT], [LEFT], [DOWN], [UP]],
+    2: [[LEFT, RIGHT], [UP, DOWN]],
+    3: [[UP, RIGHT], [DOWN, RIGHT], [DOWN, LEFT], [UP, LEFT]],
+    4: [[UP, LEFT, RIGHT], [UP, DOWN, RIGHT], [DOWN, LEFT, RIGHT], [UP, DOWN, LEFT]],
+    5: [[UP, DOWN, LEFT, RIGHT]],
 }
 
-def count_blind_spots(board):
-    return sum(row.count(0) for row in board)
+def fill(board, y, x, dy, dx, n, m):
+    filled = []
+    ny, nx = y + dy, x + dx
+    while 0 <= ny < n and 0 <= nx < m and board[ny][nx] != 6:
+        if board[ny][nx] == 0:
+            board[ny][nx] = '#'
+            filled.append((ny, nx))
+        ny += dy
+        nx += dx
+    return filled
 
-def dfs(n, m, board, cctvs, cctvs_idx):
-    if cctvs_idx == len(cctvs):
-        return count_blind_spots(board)
-    
-    y, x = cctvs[cctvs_idx]
-    answer = float('inf')
-    for dir in DIR[board[y][x]]:
-        up, down, left, right = dir
-        prev_board = [row[:] for row in board]
-        cur_up, cur_down, cur_left, cur_right = y, y, x, x
-        
-        while up != 0 and cur_up > 0:
-            if board[cur_up][x] == 6:
-                break
+def dfs(n, m, board, cctvs, idx):
+    if idx == len(cctvs):
+        return sum(row.count(0) for row in board)
 
-            cur_up += up
-            if board[cur_up][x] == 0:
-                board[cur_up][x] = '#'
-            
+    y, x = cctvs[idx]
+    result = float('inf')
 
-        while down != 0 and cur_down < n - 1:
-            if board[cur_down][x] == 6:
-                break
+    for dirs in CCTV_DIRS[board[y][x]]:
+        filled = []
+        for dy, dx in dirs:
+            filled += fill(board, y, x, dy, dx, n, m)
 
-            cur_down += down
-            if board[cur_down][x] == 0:
-                board[cur_down][x] = '#'
+        result = min(result, dfs(n, m, board, cctvs, idx + 1))
 
-        while left != 0 and cur_left > 0:
-            if board[y][cur_left] == 6:
-                break
+        for fy, fx in filled:
+            board[fy][fx] = 0
 
-            cur_left += left
-            if board[y][cur_left] == 0:
-                board[y][cur_left] = '#'
-        
-        while right != 0 and cur_right < m - 1:
-            if board[y][cur_right] == 6:
-                break
-
-            cur_right += right
-            if board[y][cur_right] == 0:
-                board[y][cur_right] = '#'
-
-        answer = min(answer, dfs(n, m, board, cctvs, cctvs_idx + 1))
-
-        board = prev_board
-
-    return answer
+    return result
 
 def main():
     n, m = map(int, input().split())
     board = [list(map(int, input().split())) for _ in range(n)]
 
-    cctvs = []
-    for i in range(n):
-        for j in range(m):
-            if board[i][j] < 6 and board[i][j] > 0:
-                cctvs.append((i, j))
+    cctvs = [(i, j) for i in range(n) for j in range(m) if 0 < board[i][j] < 6]
 
     print(dfs(n, m, board, cctvs, 0))
 
