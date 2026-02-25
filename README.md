@@ -4,6 +4,7 @@
 - [**BOJ**](./BOJ/): 백준 온라인 저지 문제를 위한 디렉토리
 - [**LeetCode**](./LeetCode/): LeetCode 문제를 위한 디렉토리
 - [**Programmers**](./Programmers/): 프로그래머스 문제를 위한 디렉토리
+- [**CodeTree**](./CodeTree/): CodeTree 문제를 위한 디렉토리
 
 <!-- # 🏅 Baekjoon solved rank
 
